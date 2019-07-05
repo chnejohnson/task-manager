@@ -1,25 +1,36 @@
 # Task Manager
 
-A simple RESTful API using TypeScript and MongoDB with Mongoose.
+In this repo, you can create some users and tasks into mongoDB. The user data has name and email, on the other hands, the task data has owner and description. 
+
+Besides, the owner of the task has a **ref** to User collection, which means that when you get the task document, the owner would not just a string of the user's id but user's name and email which comes from the User collection. Look up [Populate](https://mongoosejs.com/docs/populate.html) in the Mongoose document for more information.
 
 ## Guild
 
 At first, you should install
 
-1. **TypeScript**
-2. **Mongodb** and GUI **Robo3T**
+1. **TypeScript** for transpile into javascript.
+2. **Mongodb** and GUI **Robo3T**.
 3. **Postman** for testing the endpoint.
 
-Second, in the folder, run
-`tsc -b`
-to transpile TypeScript to Javascript into the dist folder.
+In the folder, run
 
-Third, you should run mongodb server, in my case, I run
+`tsc -b`
+
+to transpile TypeScript to Javascript by building a folder named dist.
+
+Then, you should host mongodb server, in my case, I run
+
 `~/mongodb/bin/mongod --dbpath ~/mongodb-data`
 
 Finally, run
-`yarn install` to install the dependencies, and
-`yarn run build` to execute index.js file for hosting api server.
+
+`yarn install`
+
+to install the dependencies, and
+
+`yarn run build` 
+
+to execute index.js file for hosting api server.
 
 If you host server successfully, then you can start testing endpoint below.
 
