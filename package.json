@@ -4,14 +4,17 @@
   "main": "index.js",
   "scripts": {
     "build": "node dist/index.js",
-    "dev": "nodemon dist/index.js"
+    "dev": "nodemon dist/index.js",
+    "db": "~/mongodb/bin/mongod --dbpath ~/mongodb-data"
   },
   "license": "MIT",
   "dependencies": {
+    "@types/bcryptjs": "^2.4.2",
     "@types/express": "^4.17.0",
     "@types/mongodb": "^3.1.28",
     "@types/mongoose": "^5.5.6",
     "@types/validator": "^10.11.1",
+    "bcryptjs": "^2.4.3",
     "express": "^4.17.1",
     "mongodb": "^3.2.7",
     "mongoose": "^5.6.1",

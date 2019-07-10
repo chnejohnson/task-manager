@@ -1,5 +1,5 @@
 import express from "express";
-import User from "../models/user.model.js";
+import User, { IUser } from "../models/user.model.js";
 
 const router = express.Router();
 
@@ -11,29 +11,51 @@ router.post("/users", (req, res) => {
 
   user.save((err, doc) => {
     if (err) return res.status(400).send(err);
-    console.log(doc + " be saved.");
     res.send(user + "saved");
   });
+});
+
+router.post("/users/login", async (req, res) => {
+  try {
+    const user = await User.findByCredentials(
+      req.body.email,
+      req.body.password
+    );
+    res.status(200).send(user);
+  } catch (e) {
+    res.status(500).send(e.message);
+  }
 });
 
 router.get("/users", async (req, res) => {
   try {
     const users = await User.find();
     res.status(200).send(users);
-    console.log(users);
   } catch (err) {
     res.status(500).send(err);
   }
 });
 
 router.patch("/users/:id", async (req, res) => {
+  const updates: string[] = Object.keys(req.body);
+  const allowedUpdates: string[] = ["name", "email", "password"];
+  const isValidOperation: boolean = updates.every(update =>
+    allowedUpdates.includes(update)
+  );
+
+  if (!isValidOperation)
+    return res.status(400).send({ error: "Invalid updates" });
+
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true
-    });
+    const user: IUser | null = await User.findById(req.params.id);
     if (!user) return res.status(404).send();
-    res.send(user);
+
+    updates.forEach(update => {
+      user[update] = req.body[update];
+    });
+
+    await user.save();
+    res.send(user).status(201);
   } catch (e) {
     res.status(400).send(e);
   }
