@@ -43,7 +43,7 @@ UserSchema.statics.findByCredentials = async function(
   return user;
 };
 
-UserSchema.pre("save", async function(next) {
+UserSchema.pre<IUser>("save", async function(next) {
   const user = this;
 
   if (user.isModified("password")) {

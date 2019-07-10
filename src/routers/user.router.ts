@@ -17,7 +17,7 @@ router.post("/users", (req, res) => {
 
 router.post("/users/login", async (req, res) => {
   try {
-    const user = await User.findByCredentials(
+    const user = await User.schema.statics.findByCredentials(
       req.body.email,
       req.body.password
     );
@@ -37,7 +37,7 @@ router.get("/users", async (req, res) => {
 });
 
 router.patch("/users/:id", async (req, res) => {
-  const updates: string[] = Object.keys(req.body);
+  const updates = Object.keys(req.body);
   const allowedUpdates: string[] = ["name", "email", "password"];
   const isValidOperation: boolean = updates.every(update =>
     allowedUpdates.includes(update)
@@ -46,9 +46,19 @@ router.patch("/users/:id", async (req, res) => {
   if (!isValidOperation)
     return res.status(400).send({ error: "Invalid updates" });
 
+  function isValidUpdates(updates: string[]): updates is Array<keyof IUser> {
+    return updates.every(isValidUpdate);
+  }
+
+  function isValidUpdate(update: string): update is keyof IUser {
+    return update in User;
+  }
+
   try {
     const user: IUser | null = await User.findById(req.params.id);
     if (!user) return res.status(404).send();
+
+    if (!isValidUpdates(updates)) throw new Error("Invalid updates type");
 
     updates.forEach(update => {
       user[update] = req.body[update];
