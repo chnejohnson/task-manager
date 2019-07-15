@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import User, { IUser } from "../models/user.model";
 import auth from "../middleware/auth";
 
@@ -34,8 +34,9 @@ router.post("/users/login", async (req, res) => {
   }
 });
 
-router.get("/users/me", auth, async (req, res) => {
-  res.send(req.user);
+//Read Profile
+router.get("/users/me", auth, async (req: Request, res: Response) => {
+  res.send(res.locals.user);
 });
 
 router.patch("/users/:id", async (req, res) => {

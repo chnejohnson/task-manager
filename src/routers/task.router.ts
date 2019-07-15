@@ -1,6 +1,6 @@
 import express from "express";
 import { createTask, getOwner } from "../controllers/task.controller";
-import Task from "../models/task.model";
+import Task, { ITask } from "../models/task.model";
 
 const router = express.Router();
 
@@ -41,6 +41,8 @@ router.patch("/task/:id", async (req, res) => {
     const task = await Task.findById(req.params.id);
     if (!task) return res.status(400).send({ error: "Invalid id" });
 
+    if (!isValidUpdates(updates)) throw new Error("Invalid updates type");
+
     updates.forEach(update => {
       task[update] = req.body[update];
     });
@@ -49,6 +51,14 @@ router.patch("/task/:id", async (req, res) => {
     res.status(201).send(task);
   } catch (e) {
     res.status(500).send(e);
+  }
+
+  function isValidUpdates(updates: string[]): updates is Array<keyof ITask> {
+    return updates.every(isValidUpdate);
+  }
+
+  function isValidUpdate(update: string): update is keyof ITask {
+    return update in Task;
   }
 });
 

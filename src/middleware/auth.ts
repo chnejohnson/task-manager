@@ -1,15 +1,21 @@
+import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import User from "../models/user.model";
 
-const auth = async (req, res, next) => {
+const auth = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.header("Authorization").replace("Bearer ", "");
+    let token = req.header("Authorization");
+    if (!token) throw new Error();
+    token = token.replace("Bearer ", "");
     const decoded = jwt.verify(token, "thisisprivatekey");
-    const user = await User.findOne({ _id: decoded.id, "tokens.token": token });
+    const user = await User.findOne({
+      _id: (decoded as any).id,
+      "tokens.token": token
+    });
 
     if (!user) throw new Error();
 
-    req.user = user;
+    res.locals.user = user;
     next();
   } catch (e) {
     res.status(401).send({ error: "please authenticate." });
