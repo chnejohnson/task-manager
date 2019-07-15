@@ -1,11 +1,15 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, Model } from "mongoose";
 import validator from "validator";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { IUserDocument } from "../interfaces/IUserDocument";
 
-export interface IUser extends Document {
-  name: string;
-  email: string;
-  password: string;
+export interface IUser extends IUserDocument {
+  generateAuthToken(): string;
+}
+
+export interface IUserModel extends Model<IUser> {
+  findByCredentials(email: string, password: string): IUser;
 }
 
 const UserSchema: Schema = new Schema({
@@ -27,14 +31,32 @@ const UserSchema: Schema = new Schema({
   password: {
     type: String,
     required: true
-  }
+  },
+  tokens: [
+    {
+      token: {
+        type: String,
+        required: true
+      }
+    }
+  ]
 });
+
+UserSchema.methods.generateAuthToken = async function() {
+  const user = this;
+  const token = jwt.sign({ id: user._id.toString() }, "thisisprivatekey");
+
+  user.tokens = user.tokens.concat({ token });
+  await user.save();
+
+  return token;
+};
 
 UserSchema.statics.findByCredentials = async function(
   email: string,
   password: string
 ) {
-  const user = await this.findOne({ email });
+  const user: IUser = await this.findOne({ email });
   if (!user) throw new Error("Can't find the user with email.");
 
   const isMatch = await bcrypt.compare(password, user.password);
@@ -53,4 +75,4 @@ UserSchema.pre<IUser>("save", async function(next) {
   next();
 });
 
-export default mongoose.model<IUser>("User", UserSchema);
+export default mongoose.model<IUser, IUserModel>("User", UserSchema);
