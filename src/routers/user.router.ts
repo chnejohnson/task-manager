@@ -63,8 +63,8 @@ router.get("/users/me", auth, async (req: Request, res: Response) => {
   res.send(res.locals.user);
 });
 
-//Update
-router.patch("/users/:id", async (req, res) => {
+//Update Profile
+router.patch("/users/me", auth, async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates: string[] = ["name", "email", "password"];
   const isValidOperation: boolean = updates.every(update =>
@@ -75,11 +75,7 @@ router.patch("/users/:id", async (req, res) => {
     return res.status(400).send({ error: "Invalid updates" });
 
   try {
-    const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).send();
-
-    if (!isValidUpdates(updates)) throw new Error("Invalid updates type");
-
+    const user = res.locals.user;
     updates.forEach(update => {
       user[update] = req.body[update];
     });
@@ -87,24 +83,15 @@ router.patch("/users/:id", async (req, res) => {
     await user.save();
     res.send(user).status(201);
   } catch (e) {
-    res.status(400).send(e);
-  }
-
-  function isValidUpdates(updates: string[]): updates is Array<keyof IUser> {
-    return updates.every(isValidUpdate);
-  }
-
-  function isValidUpdate(update: string): update is keyof IUser {
-    return update in User;
+    res.status(500).send(e.message);
   }
 });
 
-//Delete
-router.delete("/users/:id", async (req, res) => {
+//Delete Profile
+router.delete("/users/me", auth, async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id);
-    if (!user) return res.status(400).send();
-    res.send(user + " is deleted.");
+    await res.locals.user.remove();
+    res.send(res.locals.user);
   } catch (e) {
     res.status(500).send(e);
   }
