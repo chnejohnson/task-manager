@@ -8,11 +8,6 @@ export interface ITask extends Document {
 }
 
 const TaskSchema: Schema = new Schema({
-  owner: {
-    type: Schema.Types.ObjectId,
-    required: true,
-    ref: "User"
-  },
   description: {
     type: String,
     required: true,
@@ -21,6 +16,11 @@ const TaskSchema: Schema = new Schema({
   completed: {
     type: Boolean,
     default: false
+  },
+  owner: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: "User"
   }
 });
 

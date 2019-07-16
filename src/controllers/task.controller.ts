@@ -14,7 +14,3 @@ export function createTask({
 }: ICreateTask): Promise<ITask> {
   return Task.create({ owner, description, completed });
 }
-
-export function getOwner(id: IUser["_id"]) {
-  return Task.findById(id).populate("owner");
-}
