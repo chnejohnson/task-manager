@@ -1,4 +1,5 @@
-import Task, { ITask } from "../models/task.model";
+import Task from "../models/task.model";
+import { ITaskDocument } from "../interfaces/ITaskDocument";
 import { IUser } from "../models/user.model";
 
 interface ICreateTask {
@@ -11,6 +12,6 @@ export function createTask({
   owner,
   description,
   completed
-}: ICreateTask): Promise<ITask> {
+}: ICreateTask): Promise<ITaskDocument> {
   return Task.create({ owner, description, completed });
 }

@@ -1,6 +1,7 @@
 import express from "express";
 import { createTask } from "../controllers/task.controller";
-import Task, { ITask } from "../models/task.model";
+import Task from "../models/task.model";
+import { ITaskDocument } from "../interfaces/ITaskDocument";
 import auth from "../middleware/auth";
 
 const router = express.Router();
@@ -51,13 +52,11 @@ router.patch("/tasks/:id", auth, async (req, res) => {
   }
 
   try {
-    const task = await Task.findOne({
+    const task: any = await Task.findOne({
       _id: req.params.id,
       owner: res.locals.user._id
     });
     if (!task) return res.status(404).send();
-
-    // if (!isValidUpdates(updates)) throw new Error("Invalid updates type");
 
     updates.forEach(update => {
       task[update] = req.body[update];
@@ -67,14 +66,6 @@ router.patch("/tasks/:id", auth, async (req, res) => {
     res.status(201).send(task);
   } catch (e) {
     res.status(500).send(e.message);
-  }
-
-  function isValidUpdates(updates: string[]): updates is Array<keyof ITask> {
-    return updates.every(isValidUpdate);
-  }
-
-  function isValidUpdate(update: string): update is keyof ITask {
-    return update in Task;
   }
 });
 

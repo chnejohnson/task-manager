@@ -1,11 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { IUser } from "./user.model";
-
-export interface ITask extends Document {
-  owner: IUser["_id"];
-  description: string;
-  completed: boolean;
-}
+import { ITaskDocument } from "../interfaces/ITaskDocument";
 
 const TaskSchema: Schema = new Schema({
   description: {
@@ -24,4 +18,4 @@ const TaskSchema: Schema = new Schema({
   }
 });
 
-export default mongoose.model<ITask>("Task", TaskSchema);
+export default mongoose.model<ITaskDocument>("Task", TaskSchema);
