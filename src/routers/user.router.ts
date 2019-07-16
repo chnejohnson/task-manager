@@ -34,11 +34,36 @@ router.post("/users/login", async (req, res) => {
   }
 });
 
+//Logout
+router.post("/users/logout", auth, async (req: Request, res: Response) => {
+  try {
+    res.locals.user.tokens = res.locals.user.tokens.filter((token: any) => {
+      return token.token !== res.locals.token;
+    });
+    await res.locals.user.save();
+    res.send();
+  } catch (e) {
+    res.status(500).send(e.message);
+  }
+});
+
+//Logout all
+router.post("/users/logoutAll", auth, async (req, res) => {
+  try {
+    res.locals.user.tokens = [];
+    await res.locals.user.save();
+    res.send();
+  } catch (e) {
+    res.status(500).send(e.message);
+  }
+});
+
 //Read Profile
 router.get("/users/me", auth, async (req: Request, res: Response) => {
   res.send(res.locals.user);
 });
 
+//Update
 router.patch("/users/:id", async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates: string[] = ["name", "email", "password"];
@@ -74,6 +99,7 @@ router.patch("/users/:id", async (req, res) => {
   }
 });
 
+//Delete
 router.delete("/users/:id", async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);

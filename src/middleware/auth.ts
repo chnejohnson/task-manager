@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import User from "../models/user.model";
+import User, { IUser } from "../models/user.model";
 
 const auth = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -15,6 +15,7 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
 
     if (!user) throw new Error();
 
+    res.locals.token = token;
     res.locals.user = user;
     next();
   } catch (e) {

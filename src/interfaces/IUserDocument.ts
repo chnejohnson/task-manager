@@ -4,4 +4,5 @@ export interface IUserDocument extends Document {
   name: string;
   email: string;
   password: string;
+  tokens: object[];
 }
