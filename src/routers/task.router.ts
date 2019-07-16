@@ -39,7 +39,7 @@ router.get("/tasks/:id", auth, async (req, res) => {
   }
 });
 
-router.patch("/tasks/:id", async (req, res) => {
+router.patch("/tasks/:id", auth, async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdate = ["description", "completed"];
   const isValidOperation = updates.every(update =>
@@ -51,19 +51,22 @@ router.patch("/tasks/:id", async (req, res) => {
   }
 
   try {
-    const task = await Task.findById(req.params.id);
-    if (!task) return res.status(400).send({ error: "Invalid id" });
+    const task = await Task.findOne({
+      _id: req.params.id,
+      owner: res.locals.user._id
+    });
+    if (!task) return res.status(404).send();
 
-    if (!isValidUpdates(updates)) throw new Error("Invalid updates type");
+    // if (!isValidUpdates(updates)) throw new Error("Invalid updates type");
 
     updates.forEach(update => {
       task[update] = req.body[update];
     });
 
-    task.save();
+    await task.save();
     res.status(201).send(task);
   } catch (e) {
-    res.status(500).send(e);
+    res.status(500).send(e.message);
   }
 
   function isValidUpdates(updates: string[]): updates is Array<keyof ITask> {
@@ -72,6 +75,19 @@ router.patch("/tasks/:id", async (req, res) => {
 
   function isValidUpdate(update: string): update is keyof ITask {
     return update in Task;
+  }
+});
+
+router.delete("/tasks/:id", auth, async (req, res) => {
+  try {
+    const task = await Task.findOneAndDelete({
+      _id: req.params.id,
+      owner: res.locals.user._id
+    });
+    if (!task) return res.status(404).send();
+    res.send(task);
+  } catch (e) {
+    res.status(500).send(e.message);
   }
 });
 

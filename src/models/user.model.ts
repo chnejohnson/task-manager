@@ -1,8 +1,9 @@
-import mongoose, { Schema, Document, Model } from "mongoose";
+import mongoose, { Schema, Model } from "mongoose";
 import validator from "validator";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { IUserDocument } from "../interfaces/IUserDocument";
+import Task from "./task.model";
 
 export interface IUser extends IUserDocument {
   generateAuthToken(): string;
@@ -83,11 +84,15 @@ UserSchema.statics.findByCredentials = async function(
 
 UserSchema.pre<IUser>("save", async function(next) {
   const user = this;
-
   if (user.isModified("password")) {
     user.password = await bcrypt.hash(user.password, 8);
   }
+  next();
+});
 
+UserSchema.pre<IUser>("remove", async function(next) {
+  const user = this;
+  await Task.deleteMany({ owner: user._id });
   next();
 });
 

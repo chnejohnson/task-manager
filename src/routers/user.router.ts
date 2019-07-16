@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import User, { IUser } from "../models/user.model";
+import User from "../models/user.model";
 import auth from "../middleware/auth";
 
 const router = express.Router();
@@ -93,7 +93,7 @@ router.delete("/users/me", auth, async (req, res) => {
     await res.locals.user.remove();
     res.send(res.locals.user);
   } catch (e) {
-    res.status(500).send(e);
+    res.status(500).send(e.message);
   }
 });
 
