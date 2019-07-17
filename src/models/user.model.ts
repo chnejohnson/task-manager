@@ -13,35 +13,40 @@ export interface IUserModel extends Model<IUser> {
   findByCredentials(email: string, password: string): IUser;
 }
 
-const UserSchema: Schema = new Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-    lowercase: true,
-    validator(value: string) {
-      if (!validator.isEmail(value)) throw new Error("Email is invalid");
-    }
-  },
-  password: {
-    type: String,
-    required: true
-  },
-  tokens: [
-    {
-      token: {
-        type: String,
-        required: true
+const UserSchema: Schema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      lowercase: true,
+      validator(value: string) {
+        if (!validator.isEmail(value)) throw new Error("Email is invalid");
       }
-    }
-  ]
-});
+    },
+    password: {
+      type: String,
+      required: true
+    },
+    tokens: [
+      {
+        token: {
+          type: String,
+          required: true
+        }
+      }
+    ]
+  },
+  {
+    timestamps: true
+  }
+);
 
 UserSchema.virtual("tasks", {
   ref: "Task",
