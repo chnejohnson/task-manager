@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import User from "../models/user.model";
 import auth from "../middleware/auth";
 import multer from "multer";
+import sharp from "sharp";
 
 const router = express.Router();
 
@@ -21,7 +22,7 @@ router.post("/users", async (req, res) => {
   }
 });
 
-//login in
+//Login
 router.post("/users/login", async (req, res) => {
   try {
     const user = await User.findByCredentials(
@@ -59,12 +60,12 @@ router.post("/users/logoutAll", auth, async (req, res) => {
   }
 });
 
-//Read Profile
+//Read profile
 router.get("/users/me", auth, async (req: Request, res: Response) => {
   res.send(res.locals.user);
 });
 
-//Update Profile
+//Update profile
 router.patch("/users/me", auth, async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates: string[] = ["name", "email", "password"];
@@ -88,7 +89,7 @@ router.patch("/users/me", auth, async (req, res) => {
   }
 });
 
-//Delete Profile
+//Delete profile
 router.delete("/users/me", auth, async (req, res) => {
   try {
     await res.locals.user.remove();
@@ -118,7 +119,11 @@ router.post(
   auth,
   upload.single("avatar"),
   async (req: Request, res: Response) => {
-    res.locals.user.avatar = req.file.buffer;
+    const buffer = await sharp(req.file.buffer)
+      .resize(250, 250)
+      .png()
+      .toBuffer();
+    res.locals.user.avatar = buffer;
     await res.locals.user.save();
     res.send();
   },
@@ -134,6 +139,7 @@ router.delete("/users/me/avatar", auth, async (req, res) => {
   res.send();
 });
 
+//Get avatar
 router.get("/users/:id/avatar", async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -141,7 +147,7 @@ router.get("/users/:id/avatar", async (req, res) => {
     if (!user || !user.avatar) {
       throw new Error("Can't find the user or user's avatar.");
     }
-    res.set("Content-Type", "image/jpg");
+    res.set("Content-Type", "image/png");
     res.send(user.avatar);
   } catch (e) {
     res.status(400).send(e.message);
