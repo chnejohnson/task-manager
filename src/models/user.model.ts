@@ -68,9 +68,11 @@ UserSchema.methods.toJSON = function() {
   return userObject;
 };
 
+const jwtPrivateKey: any = process.env.JWT_SECRET;
+
 UserSchema.methods.generateAuthToken = async function() {
   const user = this;
-  const token = jwt.sign({ id: user._id.toString() }, "thisisprivatekey");
+  const token = jwt.sign({ id: user._id.toString() }, jwtPrivateKey);
 
   user.tokens = user.tokens.concat({ token });
   await user.save();

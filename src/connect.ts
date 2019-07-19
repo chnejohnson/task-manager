@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 
-mongoose.connect("mongodb://127.0.0.1:27017/task-manager-api", {
+const url: any = process.env.MONGODB_URL;
+
+mongoose.connect(url, {
   useNewUrlParser: true,
   useCreateIndex: true
 });

@@ -5,7 +5,7 @@ import userRouter from "./routers/user.router";
 import taskRouter from "./routers/task.router";
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 
 mongoose.set("useFindAndModify", false);
 

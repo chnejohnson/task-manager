@@ -4,11 +4,12 @@
   "main": "index.js",
   "scripts": {
     "build": "node dist/index.js",
-    "dev": "nodemon dist/index.js",
+    "dev": "env-cmd nodemon dist/index.js",
     "db": "~/mongodb/bin/mongod --dbpath ~/mongodb-data"
   },
   "license": "MIT",
   "dependencies": {
+    "@sendgrid/mail": "^6.4.0",
     "@types/bcryptjs": "^2.4.2",
     "@types/express": "^4.17.0",
     "@types/jsonwebtoken": "^8.3.2",
@@ -27,6 +28,7 @@
     "validator": "^11.0.0"
   },
   "devDependencies": {
+    "env-cmd": "^9.0.3",
     "nodemon": "^1.19.1"
   }
 }
