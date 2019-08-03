@@ -6,7 +6,10 @@
     "start": "node dist/index.js",
     "dev": "env-cmd nodemon dist/index.js",
     "db": "~/mongodb/bin/mongod --dbpath ~/mongodb-data",
-    "test": "jest --watch"
+    "test": "env-cmd ./test.env jest --watch"
+  },
+  "jest": {
+    "testEnvironment": "node"
   },
   "license": "MIT",
   "dependencies": {
