@@ -40,6 +40,7 @@ router.post("/users/login", async (req, res) => {
 
 //Logout
 router.post("/users/logout", auth, async (req: Request, res: Response) => {
+  res.header("Access-Control-Allow-Headers", "Authorization");
   try {
     res.locals.user.tokens = res.locals.user.tokens.filter((token: any) => {
       return token.token !== res.locals.token;

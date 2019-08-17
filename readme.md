@@ -53,3 +53,9 @@ If you host server successfully, then you can start testing endpoint below.
 1. [The Complete Node.js Developer Course (3rd Edition) by Andrew Mead, Rob Percival](https://www.udemy.com/the-complete-nodejs-developer-course-2/)
 2. [Strongly typed models with Mongoose and TypeScript by Tom Nagle](https://medium.com/@tomanagle/strongly-typed-models-with-mongoose-and-typescript-7bc2f7197722)
 3. [Typescript REST API And MongoDB Beginners by Elliot Forbes](https://tutorialedge.net/typescript/typescript-mongodb-beginners-tutorial/)
+
+## Notes
+無法用dist內的js去做測試，目前找不到解決辦法...
+測試時有確實連上資料庫的server
+但是在post的地方出錯
+我猜是app.js內的exports.default出了問題...

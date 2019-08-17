@@ -46,6 +46,7 @@ router.post("/users/login", (req, res) => __awaiter(this, void 0, void 0, functi
 }));
 //Logout
 router.post("/users/logout", auth_1.default, (req, res) => __awaiter(this, void 0, void 0, function* () {
+    res.header("Access-Control-Allow-Headers", "Authorization");
     try {
         res.locals.user.tokens = res.locals.user.tokens.filter((token) => {
             return token.token !== res.locals.token;
