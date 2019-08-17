@@ -12,7 +12,7 @@ const task_router_1 = __importDefault(require("./routers/task.router"));
 const cors_1 = __importDefault(require("cors"));
 const app = express_1.default();
 mongoose_1.default.set("useFindAndModify", false);
-app.use(cors_1.default);
+app.use(cors_1.default());
 app.use(user_router_1.default);
 app.use(task_router_1.default);
 exports.default = app;

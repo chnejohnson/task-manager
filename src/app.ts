@@ -10,7 +10,7 @@ const app = express();
 
 mongoose.set("useFindAndModify", false);
 
-app.use(cors);
+app.use(cors());
 
 app.use(userRouter);
 app.use(taskRouter);
