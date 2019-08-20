@@ -26,8 +26,9 @@ const UserSchema: Schema = new Schema(
       unique: true,
       trim: true,
       lowercase: true,
-      validator(value: string) {
+      validate(value: string): boolean {
         if (!validator.isEmail(value)) throw new Error("Email is invalid");
+        return true;
       }
     },
     password: {
