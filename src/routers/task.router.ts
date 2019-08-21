@@ -1,7 +1,6 @@
 import express from "express";
 import { createTask } from "../controllers/task.controller";
 import Task from "../models/task.model";
-import { ITaskDocument } from "../interfaces/ITaskDocument";
 import auth from "../middleware/auth";
 
 const router = express.Router();
@@ -101,6 +100,7 @@ router.delete("/tasks/:id", auth, async (req, res) => {
       owner: res.locals.user._id
     });
     if (!task) return res.status(404).send();
+
     res.send(task);
   } catch (e) {
     res.status(500).send(e.message);
